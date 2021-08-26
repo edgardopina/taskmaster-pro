@@ -4,9 +4,14 @@ var tasks = {};
 // created tasks as <p> are later replaced by <textarea> during task descr update
 var createTask = function (taskText, taskDate, taskList) {
 	// create elements that make up a task item
-	var taskLi = $("<li>").addClass("list-group-item");
-	var taskSpan = $("<span>").addClass("badge badge-primary badge-pill").text(taskDate);
-	var taskP = $("<p>").addClass("m-1").text(taskText);
+	var taskLi = $("<li>")
+		.addClass("list-group-item");
+	var taskSpan = $("<span>")
+		.addClass("badge badge-primary badge-pill")
+		.text(taskDate);
+	var taskP = $("<p>")
+		.addClass("m-1")
+		.text(taskText);
 
 	// append span and p element to parent li
 	taskLi.append(taskSpan, taskP);
@@ -47,10 +52,14 @@ var saveTasks = function () {
 $(".list-group").on("click", "p", function () {
 	// "this" would be equivalent to event.target
 	// gets task description into var text
-	var text = $(this).text().trim();
+	var text = $(this)
+		.text()
+		.trim();
 
 	// creates <textarea> element, adds class name, and value
-	var textInput = $("<textarea>").addClass("form-control").val(text);
+	var textInput = $("<textarea>")
+		.addClass("form-control")
+		.val(text);
 
 	// Swap old text description with updated description; <textarea> element is MORE
 	// suitable to accept user input data, it can accept any combination and length of
@@ -63,13 +72,83 @@ $(".list-group").on("click", "p", function () {
 	textInput.trigger("focus");
 });
 
+// due date was clicked
+// event delegation listener from <span> elements to parent <ul class="list-group>
+// this event manages click tgo update task description
+$(".list-group").on("click", "span", function () {
+	// "this" would be equivalent to event.target
+	// gets currentdate  as text  into var text
+	var date = $(this)
+		.text()
+		.trim();
+
+	// creates <input> element, adds class name, and value
+	var dateInput = $("<input>")
+		.attr("type", "text")
+		.addClass("form-control")
+		.val(date);
+
+	// Swap old date with updated date (text firmat)
+	$(this).replaceWith(dateInput);
+
+	// programatically "triggers" the event "focus" on dateInput to avoid the need
+	// to click on <input> to start the date update
+	dateInput.trigger("focus");
+});
+
+
+// this blur event will trigger as soon as the focus get outside the <input> elem
+// we capture updated info and parent's element id, and the elemnt's position (<li>)n
+// on the list to update the correct task in the tasks object
+$(".list-group").on("blur", "input[type='text']", function () {
+	// get the  current value as text
+	var date = $(this)
+		.val()
+		.trim();
+
+	// get the parent ul's id attribute by transversing-up to the closest ".list-group"
+	// Here, we're chaining it to attr(), which is returning the ID, which will be "list-"
+	// followed by the category.We're then chaining that to .replace() to remove "list-"
+	// from the text, which will give us the category name(e.g., "toDo") that will match one
+	// of the arrays on the tasks object(e.g., tasks.toDo).
+	var status = $(this)
+		.closest(".list-group")
+		.attr("id")
+		.replace("list-", "");
+
+	// get the task's position (itself in closest) in the list of other li elements (see create task)
+	var index = $(this)
+		.closest(".list-group-item")
+		.index();
+
+	// update task in array and re-save to localstorage
+	// tasks is an object.
+	// tasks[status] returns an array (e.g., toDo).
+	// tasks[status][index] returns the object at the given index in the array.
+	// tasks[status][index].date returns the date property of the object at the given index.
+	tasks[status][index].date = date;
+
+	// persists updated task description
+	saveTasks();
+
+	// recreate <span> element with updated date text
+	var taskSpan = $("<span>")
+		.addClass("badge badge-primary badge-pill")
+		.text(date);
+
+	// replace input with <span> element
+	$(this).replaceWith(taskSpan);
+});
+
+
 // this blur event will trigger as soon as the focus get outside the <textarea> elem
 // we capture updated info and parent's element id, and the elemnt's position (<li>)n
 // on the list to update the correct task in the tasks object
-
 $(".list-group").on("blur", "textarea", function () {
 	// get the textarea's current value/text
-	var text = $(this).val().trim();
+	var text = $(this)
+		.val()
+		.trim();
 
 	// get the parent ul's id attribute by transversing-up to the closest ".list-group"
 	// Here, we're chaining it to attr(), which is returning the ID, which will be "list-"
@@ -79,7 +158,9 @@ $(".list-group").on("blur", "textarea", function () {
 	var status = $(this).closest(".list-group").attr("id").replace("list-", "");
 
 	// get the task's position (itself in closest) in the list of other li elements (see create task)
-	var index = $(this).closest(".list-group-item").index();
+	var index = $(this)
+		.closest(".list-group-item")
+		.index();
 
 	// tasks is an object.
 	// tasks[status] returns an array (e.g., toDo).
@@ -91,10 +172,12 @@ $(".list-group").on("blur", "textarea", function () {
 	saveTasks();
 
 	// recreate <p> element with updated text
-  var taskP = $(",p>").addClass("m-1").text(text);
-  
-  // replace textarea with <p> element
-  $(this).replaceWith(taskP);
+	var taskP = $("<p>")
+		.addClass("m-1")
+		.text(text);
+
+	// replace textarea with <p> element
+	$(this).replaceWith(taskP);
 });
 
 // modal was triggered
