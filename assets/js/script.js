@@ -100,7 +100,9 @@ $(".list-group").on("click", "span", function () {
 // on the list to update the correct task in the tasks object AND  gets back from\
 // the temporal <input> element back to the original <span> element
 
+// ***********************************************
 // we change the "blur" event by a "change" event after adding the datepicker
+// ***********************************************
 // the blur worked to let the browser know we were done editing a due date, because
 // we wrote the date directly into the < input > element. Now, however, we use the date
 // picker to populate that element.
@@ -141,6 +143,10 @@ $(".list-group").on("change", "input[type='text']", function () {
 
 	// replace input with <span> element
 	$(this).replaceWith(taskSpan);
+	
+	// pass task's <li> element into auditTask() to check for new due date, in other words,
+	// it returns the first ancestor of taskSpan with the class list-group-item
+	auditTask($(taskSpan).closest(".list-group-item"));
 });
 
 // this blur event will trigger as soon as the focus get outside the <textarea> elem
