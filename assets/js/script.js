@@ -187,17 +187,35 @@ $(".card .list-group").sortable({
 					date: date,
 				});
 			});
-		
+
 		// trim down list's ID starting string to find object property
 		// "toDo" - from "list-toDo", etc.
 		var arrName = $(this).attr("id").replace("list-", "");
-		
+
 		// update array on task object and save
 		tasks[arrName] = tempArr;
 		saveTasks();
-	}
+	},
 });
 
+// converts trash element to droppable element.
+// NOTE that Removing a task from any of the lists triggers a sortable update(), 
+// meaning the sortable calls saveTasks().
+$("#trash").droppable({
+	accept: ".card .list-group-item",
+	tolerance: "touch",
+	drop: function (event, ui) {
+		// THE ACTUAL DRAG AND DROP
+		ui.draggable.remove();
+		console.log("drop");
+	},
+	over: function () {
+		console.log("over");
+	},
+	out: function () {
+		console.log("out");
+	}
+});
 
 // modal was triggered
 $("#task-form-modal").on("show.bs.modal", function () {
