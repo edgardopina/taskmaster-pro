@@ -253,7 +253,7 @@ $("#trash").droppable({
 // adds JQ UI datepicker to modal, just one line of code to add the datapicker
 // additional attributes are needed tho
 $("#modalDueDate").datepicker({
-	// minDate: 1,
+	minDate: 1,
 });
 
 // audit task to check if due date is close or not
