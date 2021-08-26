@@ -11,6 +11,9 @@ var createTask = function (taskText, taskDate, taskList) {
 	// append span and p element to parent li
 	taskLi.append(taskSpan, taskP);
 
+	// moment() - check the due date for color processing
+	auditTask(taskLi);
+
 	// append to ul list on the page
 	$("#list-" + taskList).append(taskLi);
 };
@@ -84,7 +87,7 @@ $(".list-group").on("click", "span", function () {
 			// when datepicker is closed-off, "force" a change event on the dateInput to
 			// ensure that we replace back from the <input> to <span> element
 			$(this).trigger("change");
-		}
+		},
 	});
 
 	// programatically "triggers" the event "focus" on dateInput to avoid the need
@@ -244,8 +247,30 @@ $("#trash").droppable({
 // adds JQ UI datepicker to modal, just one line of code to add the datapicker
 // additional attributes are needed tho
 $("#modalDueDate").datepicker({
-	minDate: 1,
+	// minDate: 1,
 });
+
+// audit task to check if due date is close or not
+var auditTask = function (taskEl) {
+	// get date from taskEl
+	var date = $(taskEl).find("span").text().trim();
+
+	// convert date to moment object set at 5:00pm "L"ocal time
+	var time = moment(date, "L").set("hour", 17);
+
+	// remove any old classes from the task taskEl. These particular classes
+	// will have to be removed to accomodate tasks with past or close due date
+	// that were moved to the future, and therefore are not past due or at risk
+	$(taskEl).removeClass("list-group-item-warning list-group-item-danger");
+
+	// apply new class if task is over due date (IF portion) or
+	// if due date is near (ELSE portion)
+	if (moment().isAfter(time)) {
+		$(taskEl).addClass("list-group-item-danger");
+	} else if (Math.abs(moment().diff(time, "days")) <= 2) {
+		$(taskEl).addClass("list-group-item-warning");
+	}
+};
 
 // modal was triggered
 $("#task-form-modal").on("show.bs.modal", function () {
