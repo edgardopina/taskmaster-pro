@@ -77,6 +77,16 @@ $(".list-group").on("click", "span", function () {
 	// Swap old date with updated date (text firmat)
 	$(this).replaceWith(dateInput);
 
+	// enable jquery ui datepicker
+	dateInput.datepicker({
+		minDate: 1,
+		onClose: function () {
+			// when datepicker is closed-off, "force" a change event on the dateInput to
+			// ensure that we replace back from the <input> to <span> element
+			$(this).trigger("change");
+		}
+	});
+
 	// programatically "triggers" the event "focus" on dateInput to avoid the need
 	// to click on <input> to start the date update
 	dateInput.trigger("focus");
@@ -84,8 +94,22 @@ $(".list-group").on("click", "span", function () {
 
 // this blur event will trigger as soon as the focus get outside the <input> elem
 // we capture updated info and parent's element id, and the elemnt's position (<li>)n
-// on the list to update the correct task in the tasks object
-$(".list-group").on("blur", "input[type='text']", function () {
+// on the list to update the correct task in the tasks object AND  gets back from\
+// the temporal <input> element back to the original <span> element
+
+// we change the "blur" event by a "change" event after adding the datepicker
+// the blur worked to let the browser know we were done editing a due date, because
+// we wrote the date directly into the < input > element. Now, however, we use the date
+// picker to populate that element.
+// This sounds more like a change event than a blur event, so we just need to listen
+// for a change instead.
+// NOTE that because we are replacing blur by change, the <input> field wont
+// automatically return to a < span > element unless we force this listener to run after
+// using AND calosing off the datepicker
+// change from "blur"
+// $(".list-group").on("blur", "input[type='text']", function () {
+// to "change"
+$(".list-group").on("change", "input[type='text']", function () {
 	// get the  current value as text
 	var date = $(this).val().trim();
 
@@ -157,16 +181,16 @@ $(".card .list-group").sortable({
 	tolerance: "pointer",
 	helper: "clone",
 	activate: function (event) {
-		console.log("activate", this);
+		// console.log("activate", this);
 	},
 	deactivate: function (event) {
-		console.log("deactivate", this);
+		// console.log("deactivate", this);
 	},
 	over: function (event) {
-		console.log("over", event.target);
+		// console.log("over", event.target);
 	},
 	out: function (event) {
-		console.log("out", event.target);
+		// console.log("out", event.target);
 	},
 	// The children() method returns an array of the list element's
 	// children(the <li> elements, labeled as li.list - group - item).
@@ -199,7 +223,7 @@ $(".card .list-group").sortable({
 });
 
 // converts trash element to droppable element.
-// NOTE that Removing a task from any of the lists triggers a sortable update(), 
+// NOTE that Removing a task from any of the lists triggers a sortable update(),
 // meaning the sortable calls saveTasks().
 $("#trash").droppable({
 	accept: ".card .list-group-item",
@@ -207,14 +231,20 @@ $("#trash").droppable({
 	drop: function (event, ui) {
 		// THE ACTUAL DRAG AND DROP
 		ui.draggable.remove();
-		console.log("drop");
+		// console.log("drop");
 	},
 	over: function () {
-		console.log("over");
+		// console.log("over");
 	},
 	out: function () {
-		console.log("out");
-	}
+		// console.log("out");
+	},
+});
+
+// adds JQ UI datepicker to modal, just one line of code to add the datapicker
+// additional attributes are needed tho
+$("#modalDueDate").datepicker({
+	minDate: 1,
 });
 
 // modal was triggered
