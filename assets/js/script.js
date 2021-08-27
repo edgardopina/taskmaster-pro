@@ -190,16 +190,22 @@ $(".card .list-group").sortable({
 	tolerance: "pointer",
 	helper: "clone",
 	activate: function (event) {
-		// console.log("activate", this);
+		// add dropover class to all task lists on drag start
+		$(this).addClass("dropover");
+		$(".bottom-trash").addClass("bottom-trash-drag")
 	},
 	deactivate: function (event) {
-		// console.log("deactivate", this);
+		// removes dropover class when deactivated
+		$(this).removeClass("dropover");
+		$(".bottom-trash").removeClass("bottom-trash-drag");
 	},
 	over: function (event) {
-		// console.log("over", event.target);
+		// when mouse is over target drop zone, it adds the styling class
+		$(event.target).addClass("dropover-active");
 	},
 	out: function (event) {
-		// console.log("out", event.target);
+		// when mouse is out fromn target drop zone, it removes the styling class
+		$(event.target).removeClass("dropover-active");
 	},
 	// The children() method returns an array of the list element's
 	// children(the <li> elements, labeled as li.list - group - item).
@@ -240,10 +246,10 @@ $("#trash").droppable({
 	drop: function (event, ui) {
 		// THE ACTUAL DRAG AND DROP
 		ui.draggable.remove();
-		// console.log("drop");
+		$(".bottom-trash").removeClass("bottom-trash-active");
 	},
 	over: function () {
-		// console.log("over");
+		$(".bottom-trash").addClass("bottom-trash-active");
 	},
 	out: function () {
 		// console.log("out");
@@ -304,8 +310,8 @@ $("#task-form-modal").on("shown.bs.modal", function () {
 	$("#modalTaskDescription").trigger("focus");
 });
 
-// save button (.btn-primary) in modal (#task-form-modal) was clicked
-$("#task-form-modal .btn-primary").click(function () {
+// save button (.btn-primary / .btn-save after touch-ups) in modal (#task-form-modal) was clicked
+$("#task-form-modal .btn-save").click(function () {
 	// get form values
 	var taskText = $("#modalTaskDescription").val();
 	var taskDate = $("#modalDueDate").val();
