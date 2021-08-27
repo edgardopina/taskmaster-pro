@@ -143,7 +143,7 @@ $(".list-group").on("change", "input[type='text']", function () {
 
 	// replace input with <span> element
 	$(this).replaceWith(taskSpan);
-	
+
 	// pass task's <li> element into auditTask() to check for new due date, in other words,
 	// it returns the first ancestor of taskSpan with the class list-group-item
 	auditTask($(taskSpan).closest(".list-group-item"));
@@ -277,6 +277,20 @@ var auditTask = function (taskEl) {
 		$(taskEl).addClass("list-group-item-warning");
 	}
 };
+
+
+// check tasks continually to see if they are past due or if they are due soon
+// we will regularly trigger the auditTask function with the setInterval() function
+const TIME_CHECK = 1800000; // 1000 msec * 60 sec * 30 min
+// In this interval, we loop over every task on the page with a class of 
+// list-group-item and execute the auditTask() function to check the due date of each one.
+var intervalCtrl = setInterval(function () {
+	$(".card .list-group-item").each(function (index, el) {
+		auditTask(el);
+	});
+}, TIME_CHECK);
+
+
 
 // modal was triggered
 $("#task-form-modal").on("show.bs.modal", function () {
