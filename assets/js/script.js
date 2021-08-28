@@ -1,6 +1,6 @@
 var tasks = {};
 
-// create task as <li> element with child <span> and <p> elements, appends to <ul>
+// create task as <li> element with chil121 <span> and <p> elements, appends to <ul>
 // created tasks as <p> are later replaced by <textarea> during task descr update
 var createTask = function (taskText, taskDate, taskList) {
 	// create elements that make up a task item
